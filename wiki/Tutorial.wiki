@@ -1,0 +1,36 @@
+#summary A short turorial for an example use of the ESA framework.
+
+==Install local Wikipedia database==
+  * Download the Wikipedia XML dump for a specific language: [http://download.wikipedia.org/]
+  * Import SQL to a local database server according to [http://www.mediawiki.org/wiki/Manual:Importing_XML_dumps]
+
+==Create context file==
+The file `config/demo_context.xml` contains all relevant properties with default values. Some of these properties, e.g. for database access or location of Terrier, have to be adjusted to the local system. This file is then needed for the demo applications.
+
+When running demos the context file is aways expected in the current working directory.
+
+==Create Wikipedia Index==
+
+=== Configure Terrier ===
+Terrier has to be configured according to the Terrier documentation.
+
+If you want to use a local terrier directory, perform the following steps:
+  # Create a directory containing the sub directory `etc/` and `var/index/`
+  # Copy the file `config/terrier.properties` to `etc/`
+  # Update the property _terrierHome_ of the bean _mt_terrier_index_factory_ in the context file
+
+=== Execution ===
+
+Command line for building the inverted index:
+{{{
+java <JVM arguments> -cp bin:lib/ir_framework-4.0.jar:<external libraries> demo.BuildWikipediaIndex -Dcollection_bean=<collection bean id> -Dlanguage=<language> -Dindex_id=<index id>
+}}}
+
+  _Comment:_ The indexer is confirmed to work with 1GB of heap size. Important are Terrier configuration settings _memory.reserved_ and _memory.heap.usage_. Please check the provided Terrier configuration file for appropriate values.
+
+==Use Explicit Semantic Analysis for semantic relatedness==
+
+Command line for computing semantic relatedness using ESA:
+{{{
+java <JVM arguments> -cp bin:lib/ir_framework-4.0.jar:<external libraries> demo.ComputeESASimilarity -Dlanguage=<language> "-Dtext_a=<first text>" "-Dtext_b=<second text>"
+}}}

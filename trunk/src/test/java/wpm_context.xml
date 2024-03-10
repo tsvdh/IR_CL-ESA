@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+       default-lazy-init="true">
+
+  <context:annotation-config/>
+
+  <bean id="wpm_en" class="org.wikipedia.miner.model.Wikipedia">
+    <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
+    <constructor-arg value="wpm_en"/>
+    <constructor-arg value="wp200909"/>
+    <constructor-arg value="=M,5XsVh"/>
+  </bean>
+
+  
+
+  <bean id="wpm_de" class="org.wikipedia.miner.model.Wikipedia">
+    <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
+    <constructor-arg value="wpm_de"/>
+    <constructor-arg value="wp200909"/>
+    <constructor-arg value="=M,5XsVh"/>
+  </bean>
+ 
+  <bean id="wpm_es" class="org.wikipedia.miner.model.Wikipedia">
+    <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
+    <constructor-arg value="wpm_es"/>
+    <constructor-arg value="wp200909"/>
+    <constructor-arg value="=M,5XsVh"/>
+  </bean>
+
+  <bean id="wpm_wp200909_mlc_articles_collection_en" class="edu.kit.aifb.wikipedia.wpm.WpmMLCArticleCollection">
+    <property name="wikipedia" ref="wpm_en"/>
+    <property name="mlcArticleDatabase" ref="wp200909_mlc_articles"/>
+    <property name="language" ref="language_en"/>
+  </bean>
+ 
+  <bean id="wpm_wp200909_mlc_categories_collection_en" class="edu.kit.aifb.wikipedia.wpm.WpmMLCCategoryCollection">
+    <property name="wikipedia" ref="wpm_en"/>
+    <property name="mlcArticleDatabase" ref="wp200909_mlc_articles"/>
+    <property name="mlcCategoryDatabase" ref="wp200909_mlc_categories"/>
+    <property name="language" ref="language_en"/>
+  </bean>
+
+  <bean id="wpm_articles_descriptions" class="edu.kit.aifb.wikipedia.wpm.WpmMlcPageDescription">
+    <property name="mlcDatabase" ref="wp200909_mlc_articles"/>
+    <property name="wikipediaMiners">
+      <list>
+        <bean id="wpm_en_wrapper" class="edu.kit.aifb.wikipedia.wpm.WikipediaMinerWrapper">
+          <property name="server" value="aifbleros.aifb.uni-karlsruhe.de"/>
+          <property name="database" value="wpm_en"/>
+          <property name="user" value="wp200909"/>
+          <property name="password" value="=M,5XsVh"/>
+        </bean>
+      </list>
+    </property>
+    <property name="languages">
+      <list>
+        <ref bean="language_en"/>
+      </list>
+    </property>
+  </bean>
+  
+</beans>

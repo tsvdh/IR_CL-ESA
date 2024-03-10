@@ -1,0 +1,37 @@
+=Howto upload wikipedia dumps to a mysql database with mwdumper for ESA=
+
+==Install the mediawiki database==
+http://www.mediawiki.org/wiki/Installation
+
+Remember to choose a binary charset database
+
+If you already have a wikipedia database, you can create a new one with a --nodata mysql dump
+{{{
+mysqldump -u user -h localhost --no-data -p database > database.sql
+}}}
+
+==Install mwdumper (java software to update wikipedia)==
+http://www.mediawiki.org/wiki/Manual:MWDumper
+
+  #Go to one of the following sites:
+http://dumps.wikimedia.org/enwiki/ (english)
+http://dumps.wikimedia.org/eswiki/ (spanish)
+http://dumps.wikimedia.org/frwiki/ (french)
+
+Or, in case of doubt:
+    http://download.wikipedia.org/
+
+==Download only the article pages files==
+Example:
+{{{
+enwiki-20130204-pages-articles1.xml-p001325001p001825000.bz2
+}}}
+There can be several articleN files for english
+
+
+==Upload the database with mwdumper==
+From the mwdumper home directory, type the following command:
+
+{{{
+java -Xms128m -Xmx1000m -jar build/mwdumper-1.16.jar --format=sql:1.5 ~/corpus/enwiki/enwiki-20130204-pages-articles26.xml-p026625004p029624976.bz2 | mysql --user=myuser --password=mypassword mywikidatabase --default-character-set=utf8
+}}}

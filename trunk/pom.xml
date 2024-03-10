@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.kit.aifb.esa</groupId>
+  <artifactId>research-esa</artifactId>
+  <version>2.0</version>
+  <name>Research ESA</name>
+  <packaging>jar</packaging>
+  <distributionManagement>
+    <repository>
+			<id>libs-releases</id>
+			<name>AIFB LS3 Artifactory</name>
+			<url>https://km.aifb.kit.edu/services/artifactory/libs-releases-local</url>
+			<uniqueVersion>false</uniqueVersion>
+    </repository>
+  </distributionManagement>
+  <build>
+    <extensions>
+      <!-- Enabling the use of FTP -->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ssh-external</artifactId>
+         <version>1.0-beta-6</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>fully.qualified.MainClass</mainClass>
+                    </manifest>
+                </archive>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>edu.kit.aifb.esa</groupId>
+      <artifactId>ir_framework</artifactId>
+      <version>4.0</version>
+    </dependency>
+  </dependencies>
+</project>

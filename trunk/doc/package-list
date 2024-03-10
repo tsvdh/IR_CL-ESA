@@ -1,0 +1,13 @@
+demo
+edu.kit.aifb
+edu.kit.aifb.concept
+edu.kit.aifb.concept.builder
+edu.kit.aifb.concept.builder.category
+edu.kit.aifb.concept.index
+edu.kit.aifb.concept.scorer
+edu.kit.aifb.terrier.concept
+edu.kit.aifb.wikipedia.mlc
+edu.kit.aifb.wikipedia.sql
+edu.kit.aifb.wikipedia.wpm
+edu.uka.aifb.concept.expert
+edu.uka.aifb.concept.model

@@ -1,0 +1,69 @@
+#summary Problems that have been experienced with Research-ESA.
+#labels Phase-Deploy
+
+= Introduction =
+
+On this page, we list known problems of different versions of Research-ESA. The presented solutions to these problems will hopefully help to avoid the same problems for new installations.
+
+= Research-ESA 2.0 =
+
+== Installing ==
+
+    * === No unique bean of type {{{edu.kit.aifb.ConfigurationManager}}} error ===
+
+This error was caused because the "&"  xml reserved character from the original {{{demo_context.xml}}} example should be replaced by &amp; to produce well formed xml. 
+
+== Building Wikipedia indexes ==  
+
+    * === {{{java.lang.OutOfMemoryError: Java heap space}}} ===
+
+==== Trouble ====
+
+The error is produced when running demo.BuildWikipediaIndex.java in a not-so-powerful hardware. 
+
+==== Shooting ====
+
+Run {{{ demo.BuildWikipediaIndex }}} with java -Xmx1G option. 
+
+    * === NoSuchMethodError in {{{ org.tartarus.snowball.SnowballProgram.stem() }}} ===
+
+Libraries downloaded from the original Snowball stemmer site doesn't work with research-esa. You need the original libraries used in ir_framework_4.0. 
+
+== Calculating ESA vectors and text similarity ==
+
+    * === ESA similarity calculation = 0.0 with non Latin-1 wikipedia databases  ===
+
+==== Trouble ====
+
+When comparing two texts with demo.ComputeESASimilarity, the wikipedia database must be on latin1 charset in order to get a semantic similarity score between the two texts. However, I wanted to work with a full wikipedia database (which in english its supposed to have around 3 million pages), so I created the database via  [http://www.mediawiki.org/wiki/MediaWiki Mediawiki] engine, which doesn't support anymore latin-1 databases. Your only options are an utf-8 binary charset database or a plain utf8 one. I tried to calculate semantic similarity with both, but demo.ComputeESASimilarity always gave ESA = 0.0000. 
+
+==== Shooting ==== 
+
+The right configuration is: 
+ * Wikimedia database with binary charset
+ * mwdumper import of [http://dumps.wikimedia.org/enwiki/20110405/ wikipedia dumps] , but mwdumper must be called using the --default-character-set=utf8: 
+{{{
+
+java -jar build/mwdumper-1.16.jar --format=sql:1.5 ~/corpus/wikipedia/en/enwiki-20110405-pages-articles4.xml.bz2 | mysql -u cidesal -p wikipedia_english --default-character-set=utf8
+
+}}}
+
+ * For the full wikipedia_english (11 million pages) the FixedSizeConceptVectorBuilder size must be bigger on demo_context.xml (originally it was set to 1000, I changed it to 10000 and it worked). 
+
+{{{
+
+<bean id="default_concept_index" class="edu.kit.aifb.terrier.concept.TerrierESAIndex"
+      init-method="readIndex">
+    <property name="language" ref="language_en"/>
+    <property name="indexId" value="wikipedia_full"/>
+    <property name="weightingModel">
+      <bean class="edu.kit.aifb.terrier.model.RtfIdfModel"/>
+    </property>
+    <property name="conceptVectorBuilder">
+      <bean class="edu.kit.aifb.concept.builder.FixedSizeConceptVectorBuilder">
+        <property name="size" value="10000"/>
+      </bean>
+    </property>
+  </bean>
+
+}}}

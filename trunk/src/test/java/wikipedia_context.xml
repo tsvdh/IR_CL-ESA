@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+       default-lazy-init="true">
+
+  <context:annotation-config/>
+
+  <bean id="wp200909_database_en" class="edu.kit.aifb.wikipedia.sql.WikipediaDatabase">
+    <property name="language" ref="language_en"/>
+    <property name="database" value="wp200909_en"/>
+  </bean>
+
+  <bean id="wp200909_database_de" class="edu.kit.aifb.wikipedia.sql.WikipediaDatabase">
+    <property name="language" ref="language_de"/>
+    <property name="database" value="wp200909_de"/>
+  </bean>
+
+  <bean id="wp200909_mlc_articles" class="edu.kit.aifb.wikipedia.mlc.MLCDatabase"
+   		init-method="readConcepts">
+    <property name="mlcTable" value="wp200909.mlc_articles_500c_3l"/>
+  </bean>
+
+  <bean id="wp200909_mlc_categories" class="edu.kit.aifb.wikipedia.mlc.MLCDatabase"
+   		init-method="readConcepts">
+    <property name="mlcTable" value="wp200909.mlc_categories_3l"/>
+    <property name="mlcCategorylinksTable" value="wp200909.mlc_categorylinks_500c_3l_2link"/>
+  </bean>
+
+  <bean id="wp200909_full_collection_de" class="edu.kit.aifb.wikipedia.sql.WikipediaCollection"
+  		init-method="readArticles">
+    <property name="wikipediaDatabase" ref="wp200909_database_de"/>
+    <property name="articleIdTable" value="wp200909_de.page"/>
+    <property name="articleIdColumn" value="page_id"/>
+  </bean>
+  
+   <bean id="mlc_factory" class="edu.kit.aifb.wikipedia.mlc.MLCFactory">
+    <property name="articleTable" value="wp200909.mlc_articles_500c_3l"/>
+    <property name="categoryTable" value="wp200909.mlc_categories_3l"/>
+    <property name="categorylinksTable" value="wp200909.mlc_categorylinks_500c_3l_2link"/>
+    <property name="rootCatId" value="69113"/>
+  </bean>
+  
+</beans>

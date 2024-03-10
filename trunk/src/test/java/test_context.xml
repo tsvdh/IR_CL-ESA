@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+       default-lazy-init="true">
+
+  <context:annotation-config/>
+
+  <bean id="terrier_index_factory" class="edu.kit.aifb.terrier.TerrierIndexFactory">
+    <property name="terrierHome" value="C:\\Users\\pso\\Documents\\Development\\terrier-3.0"/>
+    <property name="tokenAnalyzer">
+      <bean class="edu.kit.aifb.nlp.DummyAnalyzer"/>
+    </property>
+  </bean>
+
+  <bean id="configuration_manager" class="edu.kit.aifb.ConfigurationManager"/>
+
+   <import resource="database_context.xml"/>
+   <import resource="nlp_context.xml"/>
+   <import resource="wikipedia_context.xml"/>
+   <import resource="wpm_context.xml"/> 
+   <import resource="concept_context.xml"/> 
+
+</beans>
