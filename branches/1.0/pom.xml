@@ -3,7 +3,7 @@
   <groupId>edu.kit.aifb.esa</groupId>
   <artifactId>research-esa</artifactId>
   <version>1.0</version>
-  <name>Research ESA</name>
+  <name>1.0-branch</name>
   <dependencies>
   	<dependency>
   		<groupId>edu.kit.aifb.esa</groupId>
