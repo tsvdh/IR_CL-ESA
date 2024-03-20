@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Configuring Retrieval</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+[<a href="configure_indexing.html">Previous: Configuring Indexing</a>] [<a href="index.html">Contents</a>] [<a href="querylanguage.html">Next: Terrier Query Language</a>]
+</br></br><h1>Configuring Retrieval in Terrier</h1>
+
+<h2>Topics</h2>
+<p>After the end of the indexing process, we can proceed with retrieving from the 
+document collection. At this stage, the options for applying stemming or not, 
+removing stopwords or not, and the maximum length of terms, should be exactly 
+the same as the ones used for indexing the collection.</p>
+
+<p>In the file <tt>etc/trec.topics.list</tt>, we need to specify which 
+file contains the queries to process. Alternatively, we can specify the topic file by setting property <tt>trec.topics</tt> to the name of the topic file.
+
+<p>A last step before processing the queries is to specify which tags from the
+topics to use. We can do that by setting the properties <tt>TrecQueryTags.process</tt>, 
+which denotes which tags to process, <tt>TrecQueryTags.idtag</tt>, which stands for the 
+tag containing the query identifier, and <tt>TrecQueryTags.skip</tt>, which denotes
+which query tags to ignore.</p>
+
+<p>For example, suppose that the format of topics is the following:</p>
+<pre>
+&lt;TOP&gt;
+&lt;NUM&gt;123&lt;NUM&gt;
+&lt;TITLE&gt;title
+&lt;DESC&gt;description
+&lt;NARR&gt;narrative
+&lt;/TOP&gt;
+</pre>
+<p>If we want to skip the description and narrative (DESC and NARR tags
+respectively), and consequently use the title only, then we need to setup 
+the properties as follows:</p>
+<pre>
+TrecQueryTags.doctag=TOP
+TrecQueryTags.process=TOP,NUM,TITLE
+TrecQueryTags.idtag=NUM
+TrecQueryTags.skip=DESC,NARR
+</pre>
+<p>If alternatively, we want to use the title,
+description and the narrative tags to create the query, then we need to 
+setup the properties as follows:</p>
+<pre>
+TrecQueryTags.doctag=TOP
+TrecQueryTags.process=TOP,NUM,DESC,NARR,TITLE
+TrecQueryTags.idtag=NUM
+TrecQueryTags.skip=
+</pre>
+
+<p>The tags specified by TrecQueryTags are case-insensitive (note the difference from TrecDocTags). If you want them to be case-sensitive, then set <tt>TrecQueryTags.casesensitive=false</tt>.</p>
+
+<h2>Weighting Models and Parameters</h2>
+<p>Next, we need to specify which of the
+available weighting models we will use for assigning scores to the retrieved 
+documents. We do this by specifying the name of the corresponding class in the 
+file <tt>etc/trec.models</tt>, or by setting property <tt>trec.model</tt> to the name of model used. For example, if we are using the weighting scheme 
+InL2, then the models file should contain:</p>
+<pre>
+org.terrier.matching.models.InL2
+</pre>
+
+<p>Terrier provides implementation of the following weighting models:</p>
+<ul>
+<li> <a href="javadoc/org/terrier/matching/models/BB2.html">BB2</a>: Bose-Einstein model for randomness, the ratio of two Bernoulli's processes for first normalisation, and Normalisation 2 for term frequency normalisation. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/BM25.html">BM25</a>: The BM25 probabilistic model. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/DFR_BM25.html">DFR_BM25</a>: The DFR version of BM25. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/DLH.html">DLH</a>: The DLH hyper-geometric DFR model. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/DLH13.html">DLH13</a>: An improved version of DLH. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/Hiemstra_LM.html">Hiemstra_LM</a>: Hiemstra's language model. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/IFB2.html">IFB2</a>: Inverse Term Frequency model for randomness, the ratio of two Bernoulli's processes for first normalisation, and Normalisation 2 for term frequency normalisation. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/In_expB2.html">In_expB2</a>: Inverse expected document frequency model for randomness, the ratio of two Bernoulli's processes for first normalisation, and Normalisation 2 for term frequency normalisation. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/In_expC2.html">In_expC2</a>: Inverse expected document frequency model for randomness, the ratio of two Bernoulli's processes for first normalisation, and Normalisation 2 for term frequency normalisation with natural logarithm. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/InL2.html">InL2</a>: Inverse document frequency model for randomness, Laplace succession for first normalisation, and Normalisation 2 for term frequency normalisation. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/LemurTF_IDF.html">LemurTF_IDF</a>: Lemur's version of the tf*idf weighting function. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/PL2.html">PL2</a>: Poisson estimation for randomness, Laplace succession for first normalisation, and Normalisation 2 for term frequency normalisation. </li>
+
+<li> <a href="javadoc/org/terrier/matching/models/TF_IDF.html">TF_IDF</a>: The tf*idf weighting function, where tf is given by Robertson's tf and idf is given by the standard Sparck Jones' idf. </li>
+
+
+<li> <a href="javadoc/org/terrier/matching/models/DFRWeightingModel.html">DFRWeightingModel</a>: This class provides an alternative way of specifying the weighting model to be used. For usage, see <a href="extend_retrieval.html">Extending Retrieval</a>. </li>
+
+</ul> 
+
+<p>To process the queries, we can type the following:</p>
+<pre>
+bin/trec_terrier.sh -r -c 1.0
+</pre>
+<p>where the option <tt>-r</tt> specifies that we want to perform retrieval, and the 
+option <tt>-c 1.0</tt> specifies the parameter value for the term frequency 
+normalisation.</p>
+
+<p>To process queries using a specific weighting model, we can <i>override</i> the <tt>trec.model</tt> property on the command line:</p>
+<pre>
+bin/trec_terrier.sh -r -Dtrec.model=DLH13
+</pre>
+<p>-D tells TrecTerrier that we wish to override a property.</p>
+
+
+<a name="fields"><h2>Field-Based Weighting Models</h2></a>
+Starting with version 3.0, Terrier has support for field-based weighting models. In particular, field-based models take into account not just the presence of a term in a field, but the actual frequency of the occurrence in that field. For instance, for a document where the query term occurs once in the body of the text, then there is only a small chance that the document is really related to that term. However, if the term occurs in the title of the document, then this chance is greatly increased.
+
+Terrier provides several field-based weighting models:
+<ul>
+<li><a href="javadoc/org/terrier/matching/models/PL2F.html">PL2F</a>: this is a per-field normalisation model, which is based on PL2.</li>
+<li><a href="javadoc/org/terrier/matching/models/BM25F.html">BM25F</a>: this is a per-field normalisation model, which is based on BM25.</li>
+<li><a href="javadoc/org/terrier/matching/models/ML2.html">ML2</a>: this is multinomial field-based model.</li>
+<li><a href="javadoc/org/terrier/matching/models/MDL2.html">MDL2</a>: this is another multinomial field-based model, where the multinomial is replaced by an approximation.</li>
+<li>Arbitrary per-field normalisation weighting models can be generated using <a href="javadoc/org/terrier/matching/models/PerFieldNormWeightingModel.html">PerFieldNormWeightingModel</a>.
+</ul>
+
+<p>To use a field-based model, you have to index using fields. See <a href="configure_indexing.html">Configuring Indexing</a> for more details on how to configure field to index during retrieval.</p>
+
+<p>Different field-based models have different parameters, as controlled by various properties. 
+These generally include weights for each field, namely <tt>w.0</tt>, <tt>w.1</tt>, etc. Per-field normalisation models, such as BM25F and PL2F also require the normalisation parameters for each field, namely  <tt>c.0</tt>, <tt>c.1</tt>, and so on. To run with a field-based model:</p>
+<pre>
+bin/trec_terrier.sh -r -Dtrec.model=PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
+</pre>
+<p>For improved efficiency of field-based weighting models, it is recommended that you manually alter the <tt>data.properties</tt> file of your index, to change the DocumentIndex implementation in use, by updating it to read <tt>index.document.class=org.terrier.structures.FSAFieldDocumentIndex</tt>.	
+
+<a name="proximity"><h2>Proximity (Dependence) Models</h2></a>
+<p>Starting with version 3.0, Terrier includes two dependence models. Such models highly weight documents where the query terms in close proximity. Two dependence models are included:</p>
+<ul>
+<li><a href="javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html">DFRDependenceScoreModifier</a> - this implements a Divergence from Randomness based dependence model.</li>
+<li><a href="javadoc/org/terrier/matching/dsms/DFRDependenceScoreModifier.html">MRFDependenceScoreModifier</a> - this implements the Markov Random Field dependence model.</li>
+</ul>
+<p>To enable the dependence models, use the <tt>matching.dsms</tt> property. E.g. :</p>
+<pre>
+bin/trec_terrier.sh -r -Dmatching.dsms=DFRDependenceScoreModifier
+</pre>
+<p>The dependence models have various parameters to set. For more information, see the classes themselves.</p>
+
+<a name="priors"><h2>Document Prior Features</h2></a>
+<p>Terrier can easily integrate a query-independent document feature (or prior) into your retrieval model. The simplest way to do this is using <a href="javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html">SimpleStaticScoreModifier</a>. For instance, say you generate a feature  for all documents in the collection (e.g. using link analysis, say). You should export your file in one of the formats supported by SimpleStaticScoreModifier, e.g. feature value for each document, one per line. You can then add the feature as:</p>
+<pre>
+bin/trec_terrier.sh -r -Dmatching.dsms=SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
+</pre>
+<p>The property <tt>ssa.w</tt> controls the weight of your feature. For more information on the type of files supported, see <a href="javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html">SimpleStaticScoreModifier</a>. Finally, Terrier can support multiple DSMs, using them in a comma-delimited manner:</p>
+<pre>
+bin/trec_terrier.sh -r -Dmatching.dsms=DFRDependenceScoreModifier,SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
+</pre>
+
+<a name="qe"><h2>Query Expansion</h2></a>
+<p>Terrier also offers a query expansion functionality. For a brief description of the query expansion module, you may view the <a href="dfr_description.html#queryexpansion">query expansion section of the DFR Framework description</a>. The term weighting model used for expanding the queries with the most informative terms of the top-ranked documents is specified in the file etc/qemodels. This file contains the class names of the term weighting models to be used for query expansion. The default content of the file is:</p>
+<pre>
+org.terrier.matching.models.queryexpansion.Bo1  
+</pre>
+<p>In addition, there are two parameters that can be set for applying query expansion. The first one is the number of terms to expand a query with. It is specified by the property <tt>expansion.terms</tt>, the default value of which is <tt>10</tt>. Moreover, the number of top-ranked documents from which these terms are extracted, is specified by the property <tt>expansion.documents</tt>, the default
+value of which is 3.</p>
+
+<p>To retrieve from an indexed test collection, using query expansion, with the term frequency normalisation parameter equal to 1.0, we can type:</p>
+<pre>
+bin/trec_terrier.sh -r -q -c 1.0 
+</pre>
+<p>Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format "qrels" file. To use feedback documents in query expansion, change the <a href="javadoc/org/terrier/querying/FeedbackSelector.html">FeedbackSelector</a>, as follows:</p>
+<pre>
+bin/trec_terrier.sh -r -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
+</pre>
+
+<h2>Other Configurables</h2>
+<p>The results are saved in the directory var/results 
+in a file named as follows:</p>
+<pre>
+"weighting scheme" c "value of c"_counter.res
+</pre>
+<p>For example, if we have used the weighting scheme PL2 with c=1.28 and 
+the counter was 2, then the filename of the results would be <tt>PL2c1.28_3.res</tt>. If you wish to override the filename of the generated result file, use the <tt>trec.results.file</tt> property. Alternatively, if multiple instance of Terrier are writing files at same time, the use of the counter can fail due to a race condition. Instead, set <tt>trec.querycounter.type=random</tt>. Output files by TRECQuerying are always in the TREC-format. If you desire an alternative format, you can implement another <a href="doc/javadoc/org/terrier/applications/TRECQuerying.OutputFormat.html">OutputFormat</a>, then get TRECQuerying to use this with the property <tt>trec.querying.outputformat</tt>.</p>
+
+<p>For each query, Terrier returns a maximum number of 1000 documents by default. We can change the maximum number of returned documents per query by changing <tt>matching.retrieved_set_size</tt>. For example, if we want to retrieve 10000 document for each given query, we need to set <tt>matching.retrieved_set_size</tt> to 10000. In addition, we need to set the rank of the last returned document to 9999 in <tt>querying.default.controls</tt>. TRECQuerying can also limit this number, according to the <tt>trec.output.format.length</tt> property (default 1000) also.</p> 
+
+<p>Some of the weighting models, e.g. BM25, assume low document frequencies of query terms. For these models, it is worth ignoring query terms with high document frequency during retrieval by setting <tt>ignore.low.idf.terms</tt> to true.Moreover, it is better to set <tt>ignore.low.idf.terms</tt> to false for high precision search tasks such as named-page finding.</p>
+
+<p></p>
+
+[<a href="configure_indexing.html">Previous: Configuring Indexing</a>] [<a href="index.html">Contents</a>] [<a href="querylanguage.html">Next: Terrier Query Language</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">Department of Computing Science</a><br>
+
+Copyright (C) 2004-2010 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+</body>
+</html>

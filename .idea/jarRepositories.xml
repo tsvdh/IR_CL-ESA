@@ -2,9 +2,19 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="icm" />
+      <option name="name" value="icm" />
+      <option name="url" value="https://maven.icm.edu.pl/artifactory/repo/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="gentics" />
+      <option name="name" value="gentics" />
+      <option name="url" value="https://maven.gentics.com/maven2/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

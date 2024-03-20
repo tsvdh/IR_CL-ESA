@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/*
+ * Terrier - Terabyte Retriever 
+ * Webpage: http://terrier.org/
+ * Contact: terrier{a.}dcs.gla.ac.uk
+ * University of Glasgow - Department of Computing Science
+ * http://www.gla.ac.uk/
+ * 
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is build.xml
+ *
+ * The Original Code is Copyright (C) 2004-2010 the University of Glasgow.
+ * All Rights Reserved.
+ *
+ * Contributor(s):
+ *  Craig Macdonald <craigm{a.}dcs.gla.ac.uk> (original contributor)
+ *  Alan Dunk
+ */
+-->
+<project basedir="." name="Terrier" default="core-jar">
+
+	<property file="build.properties"/>
+	
+	<property name="base.dir"	value="." />
+	<property name="lib.dir"	 value="${base.dir}/lib" />
+	<property name="src.dir"	 value="${base.dir}/src" />
+	<property name="src.core.dir" value="${src.dir}/core" />
+	<property name="src.test.dir" value="${src.dir}/test" />
+	<property name="classes.dir" value="${base.dir}/classes" />
+	<property name="javadoc.dir" value="${base.dir}/doc/javadoc" />
+	
+
+	<property name="javac.debuglevel" value="lines,vars,source" />
+	<property name="javac.debug" value="on"/>
+	<property name="javac.optimize" value="on"/>
+	<property name="javac.deprecation" value="off"/>
+	<property name="javac.version" value="1.5"/>
+	<property name="javac.args" value="-Xlint:unchecked"/>
+
+	<property name="Name" value="Terrier"/>
+	<property name="name" value="terrier"/>
+	<property name="version" value="3.0"/>
+	<property name="final.name" value="${name}-${version}"/>
+	<property name="year" value="2009"/>
+	<property name="url" value="http://terrier.org/"/>
+	<property name="main.source" value="org/terrier"/>
+
+	<property name="javadoc.link.java" value="http://java.sun.com/j2se/1.5/docs/api/"/>
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<!-- builds both the core and testing jar files -->	
+	<target name="jar" depends="core-jar,test-jar"/>
+
+	<!-- removes the build information -->
+	<target name="clean" description="Remove all generated files">
+		<delete dir="${classes.dir}" />
+		<delete dir="${classes.dir}_test" />
+		<delete dir="${base.dir}/dist/" />
+	</target>
+
+	<!-- creates folder for putting built class files in -->
+	<target name="init" description="Create the folders required for compilation">
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${classes.dir}_test" />
+	</target>
+
+	<!-- aliase to create the core jar file -->
+	<target name="compile"  description="Compile Terrier" depends="core-jar" />
+
+	<!-- compiles the grammars in the core -->
+	<target name="compile-core-grammars" description="Compile ANTLR grammars" depends="init">
+		<antlr target="${src.core.dir}/${main.source}/querying/parser/terrier_floatlex.g" >
+			<classpath path="${lib.dir}/antlr.jar"/>
+		</antlr>
+		<antlr target="${src.core.dir}/${main.source}/querying/parser/terrier_normallex.g">
+			<classpath path="${lib.dir}/antlr.jar"/>
+		</antlr>
+		<antlr target="${src.core.dir}/${main.source}/querying/parser/terrier.g">
+			<classpath path="${lib.dir}/antlr.jar"/>
+		</antlr>
+	</target>
+
+	<!-- compiles the java files in the core -->
+	<target name="compile-core-classes" description="Compile core Terrier classes" depends="init,compile-core-grammars">
+		<javac srcdir="${src.core.dir}" destdir="${classes.dir}" 
+			debuglevel="${javac.debuglevel}"
+			debug="${javac.debug}"
+			optimize="${javac.optimize}"
+			target="${javac.version}"
+			source="${javac.version}"
+			deprecation="${javac.deprecation}"
+		>
+        	<compilerarg line="${javac.args}"/>
+			<classpath refid="classpath" />
+			<include name="**/*.java" />
+		</javac>
+	</target>
+
+	<!-- builds the jar file for the core -->
+	<target name="core-jar" description="Build the core jar file" depends="compile-core-classes">
+		<jar jarfile="${lib.dir}/${final.name}-core.jar" basedir="${classes.dir}" />
+	</target>
+
+
+	<!-- compiles the java files for testing -->
+	<target name="compile-test-classes" description="Compile core Terrier classes" depends="core-jar,init">
+		<javac srcdir="${src.test.dir}" destdir="${classes.dir}_test" 
+			debuglevel="${javac.debuglevel}"
+            debug="${javac.debug}"
+            optimize="${javac.optimize}"
+            target="${javac.version}"
+            source="${javac.version}"
+            deprecation="${javac.deprecation}"
+		>
+			<compilerarg value="-Xlint:unchecked"/>
+			<classpath refid="classpath" />
+			<include name="**/*.java" />
+		</javac>
+	</target>	
+
+	<!-- builds the jar file for testing -->
+	<target name="test-jar" description="Build the test jar file" depends="compile-test-classes">
+		<jar jarfile="${lib.dir}/${final.name}-test.jar" basedir="${classes.dir}_test" />
+	</target>
+
+	<!-- runs the tests -->
+	<target name="test" description="Run the tests" depends="test-jar">
+		 <junit showoutput="${test.output}" haltonfailure="no"
+			fork="yes" maxmemory="256m" dir="${basedir}" printsummary="yes"
+			errorProperty="tests.failed" failureProperty="tests.failed"
+			>
+			<formatter type="plain" />
+			<classpath refid="classpath" />
+			<test name="TerrierDefaultTestSuite" />
+		</junit>
+		<fail if="tests.failed">Tests failed!</fail>
+	</target>
+
+	<!-- generate the javadoc -->
+	<target name="javadoc" description="Generate javadoc">
+		<mkdir dir="${javadoc.dir}"/>
+		 <javadoc
+			destdir="${javadoc.dir}"
+			overview="${src.core.dir}/overview.html"
+			sourcepath="${src.core.dir}"
+			packagenames="org.terrier.*"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="${Name} ${version} API"
+			doctitle="${Name} ${version} API"
+			bottom="&lt;a href='${url}'&gt;${Name}&lt;/a&gt; ${version}. Copyright &amp;copy; 2004-${year} ;a href='http://www.gla.ac.uk/'&gt;University of Glasgow&lt;/a&gt;"
+			failonerror="true"
+		>
+			<classpath refid="classpath" />
+			<link href="${javadoc.link.java}"/>
+			<group title="Core" packages="org.terrier.*"/>
+		</javadoc>	
+	</target>
+
+	<!-- builds the final distributable .tar.gz, .tar.bz2 and .zip files -->
+	<target name="dist" description="Build the {final.name}.tar.gz file" depends="clean, core-jar, test, javadoc">
+		<property name="build.dir" value="${base.dir}/dist/${final.name}" />
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.dir}/var" />
+		<mkdir dir="${build.dir}/var/index" />
+		<mkdir dir="${build.dir}/var/results" />
+		<!-- copy target omits .svn folders, fortunately -->
+		<copy toDir="${build.dir}/${src.dir}">
+			<fileset dir="${src.dir}"/>
+		</copy>
+		<copy toDir="${build.dir}/${lib.dir}">
+			<fileset dir="${lib.dir}"/>
+		</copy>
+		<copy toDir="${build.dir}/bin/">
+			<fileset dir="bin/"/>
+		</copy>
+		<copy toDir="${build.dir}/etc">
+			<fileset dir="etc/"/>
+		</copy>
+		<copy toDir="${build.dir}/doc">
+			<fileset dir="doc/"/>
+		</copy>
+		<copy toDir="${build.dir}/share">
+			<fileset dir="share/"/>
+		</copy>
+		<copy toDir="${build.dir}/licenses">
+			<fileset dir="licenses/" />
+		</copy>
+		<copy toDir="${build.dir}/">
+			<fileset file="LICENSE.txt" />
+			<fileset file="README.txt" />
+			<fileset file="build.xml" />
+		</copy>
+
+		<echo>Fixing line endings for Unix</echo>
+		<fixcrlf srcdir="${build.dir}" eol="unix">
+			<include name="**/*.java"/>
+			<include name="**/*.bat" />
+			<include name="**/*.html" /> 
+			<include name="**/*.sh" />
+		</fixcrlf>
+
+		<echo>Chmodding exectuable scripts</echo>
+		<!-- this has limited effect, as the tar task ignores them anyway! -->
+		<chmod dir="${build.dir}/bin" perm="ugo+rx" includes="*.sh"/>
+		
+		<tar destfile="${base.dir}/dist/${final.name}.tar" longfile="gnu">
+			<tarfileset dir="${base.dir}/dist/">
+				<include name="${final.name}/**" />
+				<exclude name="${final.name}/bin/*.sh" />
+			</tarfileset>
+			<!-- re-add the bin/*.sh scripts with +x bits set -->
+			<tarfileset dir="${base.dir}/dist/" mode="755">
+				<include name="${final.name}/bin/*.sh" />
+			</tarfileset>
+		</tar>
+		<gzip src="${base.dir}/dist/${final.name}.tar" destfile="${base.dir}/${final.name}.tar.gz" />
+		<bzip2 src="${base.dir}/dist/${final.name}.tar" destfile="${base.dir}/${final.name}.tar.bz2" />
+
+		<echo>Fixing line endings for Windows</echo>	
+		<fixcrlf srcdir="${build.dir}" eol="dos">
+			<include name="**/*.java"/>
+			<include name="**/*.bat" />
+			<include name="**/*.html" />
+			<include name="**/*.sh" />
+		</fixcrlf>
+	
+		<zip destfile="${base.dir}/${final.name}.zip">
+			<zipfileset dir="${base.dir}/dist/">
+				<include name="${final.name}/**" />
+			</zipfileset>
+		</zip>
+	</target>
+
+</project>

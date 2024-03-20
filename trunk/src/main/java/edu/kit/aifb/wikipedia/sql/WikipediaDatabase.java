@@ -382,13 +382,24 @@ public class WikipediaDatabase {
 
 	public String getText(IPage p) {
 		try {
-			String sql = 
-				"select old_text "
-				+"from "+db+".revision, "
-				+"  "+db+".text "
-				+"where rev_page=? "
-				+"and rev_text_id=old_id "
-				+"order by rev_timestamp desc limit 1;";
+			// String sql =
+			// 	"select old_text "
+			// 	+"from "+db+".revision, "
+			// 	+"  "+db+".text "
+			// 	+"where rev_page=? "
+			// 	+"and rev_text_id=old_id "
+			// 	+"order by rev_timestamp desc limit 1;";
+
+			// --- NEW query to handle changed MediaWiki DB format ---
+			String sql = String.format(
+					"SELECT old_text "
+					+ "FROM %s.revision "
+					+ "JOIN %s.slots ON rev_id = slot_revision_id "
+					+ "JOIN %s.content ON content_id = slot_content_id "
+					+ "JOIN %s.text ON old_id = CONVERT(SUBSTRING(CONVERT(content_address, CHAR), 4), INT) "
+					+ "WHERE rev_page = ? "
+					+ "ORDER BY rev_timestamp DESC LIMIT 1",
+			db, db, db, db);
 
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);

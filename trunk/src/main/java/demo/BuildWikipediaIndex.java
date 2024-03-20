@@ -3,6 +3,8 @@ package demo;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -24,7 +26,7 @@ public class BuildWikipediaIndex {
 	
 	static public void main( String[] args ) throws Exception {
 		try {
-			ApplicationContext context = new FileSystemXmlApplicationContext( "*_context.xml" );
+			ApplicationContext context = new FileSystemXmlApplicationContext( "config/demo_context.xml" );
 			ConfigurationManager confMan = (ConfigurationManager) context.getBean( ConfigurationManager.class );
 			confMan.parseArgs( args );
 			confMan.checkProperties( REQUIRED_PROPERTIES );

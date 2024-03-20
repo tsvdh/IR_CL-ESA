@@ -33,7 +33,7 @@ public class ComputeESASimilarity {
 	 * @throws ConfigurationException 
 	 */
 	public static void main( String[] args ) throws Exception {
-		ApplicationContext context = new FileSystemXmlApplicationContext( "*_context.xml" );
+		ApplicationContext context = new FileSystemXmlApplicationContext( "config/demo_context.xml" );
 		ConfigurationManager confMan = (ConfigurationManager) context.getBean( ConfigurationManager.class );
 		confMan.parseArgs( args );
 		confMan.checkProperties( REQUIRED_PROPERTIES );

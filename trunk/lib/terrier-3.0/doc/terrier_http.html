@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Using the Web-based Terrier application</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="docs.css">
+</head>
+
+<body>
+<!--!bodystart-->
+
+[<a href="terrier_desktop.html">Previous: Desktop Search</a>] [<a href="index.html">Contents</a>] [<a href="trec_examples.html">Next: TREC Experiment Examples</a>] 
+</br><br><h1>Using the Web-based Terrier application</h1>
+
+<h2>Using the Web-based interface</h2>
+<p>Terrier provides a simple Web-based interface. Firstly, the Web-based interface has slightly higher requirements than Terrier -- in particular, as <a href="en.wikipedia.org/wiki/JavaServer_Pages">JSPs</a> are used, the full Java Development Kit (JDK) is required, instead of the JRE. To download the JDK, see <a href="http://java.sun.com/javase/downloads/index.jsp">Java downloads</a>. Finally, ensure that the JAVA_HOME environment variable points to your JDK installation.</p>
+
+<p>You can start the Web-based interface using the following command:</p>
+<pre>
+bin/http_terrier.sh
+</pre>
+<p>As usual, you can override the default <tt>etc/</tt> folder using the <tt>TERRIER_ETC</tt> environment variable:</p>
+<pre>
+TERRIER_ETC=etc/wt2g bin/http_terrier.sh
+</pre>
+<p>Once started, the server can be accessed at <a href="http://localhost:8080/">http://localhost:8080/</a>.</p>
+
+<h3>Customising look &amp; feel</h3>
+<p>You can change the look and feel of the search results by editing src/webapps/simple/results.jsp, or the stylesheet in the same location. Changes made to results.jsp should have an immediate effect on the results.</p>
+
+<p>If you wish to make another webapps folder, or started on a port other than 8080, you can override both on the command line.</p>
+<pre>
+TERRIER_ETC=etc/wt2g bin/http_terrier.sh 8000 /path/to/webapps/
+</pre>
+
+<h3>Extending the Query Language</h3>
+<p>Terrier provides several <a href="javadoc/org/terrier/querying/PostFilter.html">PostFilters</a> that are useful for interactive operation. For example, the <a href="javadoc/org/terrier/querying/SiteFilter.html">SiteFilter</a> is an implementation of the <tt>site:</tt> control from standard Web search engines, and ensures that returned results have a hostname matching the desired expression. The hostname is obtained from the <tt>url</tt> metadata from the MetaIndex. For example, adding <tt>site:com</tt> to the query will ensure that all results have URLs from the .com domain. For TREC or similar collections, the <a href="javadoc/org/terrier/querying/Scope.html">Scope</a> filter permits a starting prefix on the docno document metadata from the MetaIndex.</p>
+
+
+<h3>Highlighting and Query-biased Summaries</h3>
+<p><a href="javadoc/org/terrier/querying/SimpleDecorate.html">SimpleDecorate</a> is responsible for adding document metadata from the <a href="javadoc/org/terrier/structures/MetaIndex.html">MetaIndex</a> to the ResultSet. <a href="javadoc/org/terrier/querying/Decorate.html">Decorate</a> is a more involved decorator, which facilitates query-biassed summarisation, and highlighting of query term matches in the metadata.</p>
+
+
+<h3>Further Details</h3>
+<p><tt>bin/http_terrier.sh</tt> invokes <a href="javadoc/org/terrier/utility/SimpleJettyHTTPServer.html">SimpleJettyHTTPServer</a>, which starts a <a href="http://www.mortbay.org/">Jetty</a> server on the port specified on the command line. The second command line argument is the path to a webapps folder. <tt>share/images</tt> is also mounted as <tt>/images</tt> directory.  
+
+<p></p>
+<a href="hadoop_configuration.html">Previous: Terrier/Hadoop Configuration</a>] [<a href="index.html">Contents</a>] [<a href="properties.html">Next: Properties in Terrier</a>]
+<!--!bodyend-->
+<hr>
+<small>
+Webpage: <a href="http://terrier.org">http://terrier.org</a><br>
+Contact: <a href="mailto:terrier@dcs.gla.ac.uk">terrier@dcs.gla.ac.uk</a><br>
+<a href="http://www.dcs.gla.ac.uk/">Department of Computing Science</a><br>
+
+Copyright (C) 2004-2010 <a href="http://www.gla.ac.uk/">University of Glasgow</a>. All Rights Reserved.
+</small>
+<tr><td colspan="2">&nbsp;</td></tr>
+</body>
+</html>
