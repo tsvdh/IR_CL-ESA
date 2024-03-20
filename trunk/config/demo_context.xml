@@ -70,7 +70,7 @@
   <bean id="default_concept_index" class="edu.kit.aifb.terrier.concept.TerrierESAIndex"
       init-method="readIndex">
     <property name="language" ref="language_en"/>
-    <property name="indexId" value="wikipedia_full_en"/>
+    <property name="indexId" value="default_concept_index"/>
     <property name="weightingModel">
       <bean class="edu.kit.aifb.terrier.model.RtfIdfModel"/>
     </property>
